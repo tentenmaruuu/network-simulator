@@ -15,7 +15,7 @@ body {
   background-color: white;
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* 🖼️ 将来、PCやルーターを並べる「シミュレーターの描画エリア」の器 */
@@ -33,7 +33,7 @@ body {
 }
 
 /* 🌟 ボタンが並ぶメニューバーの設定 */
-.menu-bar {
+.menu {
   display: flex;
   justify-content: center;
   gap: 10px; /* ボタンとボタンの間のすき間 */
