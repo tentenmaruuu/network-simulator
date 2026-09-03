@@ -23,11 +23,54 @@ body {
   width: 750px;
   height: 500px;
   background-color: #fafafa;
-  border: 5px solid #120d0d;
+  border: 6px solid #cfd8dc;
   border-radius: 8px;
   margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #999;
+}
+
+/* 🌟 ボタンが並ぶメニューバーの設定 */
+.menu-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* ボタンとボタンの間のすき間 */
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* 🌟 すべてのボタンに共通する基本デザイン */
+.btn {
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer; /* マウスを乗せたときに「手（指）」のマークにする */
+  transition: background-color 0.2s; /* 色が変わるときに「ふわっ」とさせる */
+}
+
+/* 🌟 ボタンごとに色を変えてカラフルにする */
+.btn-pc {
+  background-color: #e3f2fd;
+  color: #1e88e5;
+} /* 薄い青 */
+.btn-router {
+  background-color: #efebe9;
+  color: #6d4c41;
+} /* 薄い茶色 */
+.btn-server {
+  background-color: #e8f5e9;
+  color: #43a047;
+} /* 薄い緑 */
+.btn-clear {
+  background-color: #ffebee;
+  color: #e53935;
+} /* 薄い赤 */
+
+/* 🌟 マウスを乗せたときに少し暗くして「押せる感」を出す（hover） */
+.btn:hover {
+  filter: brightness(0.9);
 }
