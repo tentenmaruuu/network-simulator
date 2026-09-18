@@ -1,0 +1,79 @@
+name: Codex Issue to Pull Request
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  codex:
+    if: github.event.label.name == 'codex-task'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout base
+        uses: actions/checkout@v5
+        with:
+          ref: base
+          fetch-depth: 0
+
+      - name: Create task branch
+        run: git checkout -b "codex/issue-${{ github.event.issue.number }}"
+
+      - name: Run Codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          prompt: |
+            You are working on the network-simulator repository.
+            Implement the GitHub Issue below as a focused change.
+            First inspect the existing project structure.
+            Do not rewrite unrelated code.
+            Keep the implementation appropriate for a beginner-friendly JavaScript/Vite project.
+            Run relevant tests or a build if available.
+            Do not create commits or pull requests; the workflow handles those steps.
+            GitHub Issue title: ${{ github.event.issue.title }}
+            GitHub Issue body:
+            ${{ github.event.issue.body }}
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "feat: implement issue #${{ github.event.issue.number }}"
+
+      - name: Push branch
+        if: steps.changes.outputs.has_changes == 'true'
+        run: git push --set-upstream origin "codex/issue-${{ github.event.issue.number }}"
+
+      - name: Create pull request
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --base base \
+            --head "codex/issue-${{ github.event.issue.number }}" \
+            --title "Codex: ${{ github.event.issue.title }}" \
+            --body "Automated implementation of #${{ github.event.issue.number }} by Codex. Please review before merging."
+
+      - name: Comment when no changes were made
+        if: steps.changes.outputs.has_changes == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue comment "${{ github.event.issue.number }}" --body "Codex completed the task but produced no file changes. No PR was created."
